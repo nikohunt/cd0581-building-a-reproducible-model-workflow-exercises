@@ -1,4 +1,4 @@
-name: udacity
+name: download_data
 channels:
   - conda-forge
   - defaults
