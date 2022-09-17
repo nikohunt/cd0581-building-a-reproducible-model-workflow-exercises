@@ -2,16 +2,17 @@
 import argparse
 import logging
 import pathlib
-import wandb
-import requests
 import tempfile
 
+import requests
+
+import wandb
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
 
 
-def go(args):
+def go(args):  # sourcery skip: extract-method
 
     # Derive the base name of the file from the URL
     basename = pathlib.Path(args.file_url).name.split("?")[0].split("#")[0]
@@ -49,7 +50,8 @@ def go(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Download a file and upload it as an artifact to W&B", fromfile_prefix_chars="@"
+        description="Download a file and upload it as an artifact to W&B",
+        fromfile_prefix_chars="@"
     )
 
     parser.add_argument(
@@ -57,11 +59,13 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--artifact_name", type=str, help="Name for the artifact", required=True
+        "--artifact_name", type=str, help="Name for the artifact",
+        required=True
     )
 
     parser.add_argument(
-        "--artifact_type", type=str, help="Type for the artifact", required=True
+        "--artifact_type", type=str, help="Type for the artifact",
+        required=True
     )
 
     parser.add_argument(
