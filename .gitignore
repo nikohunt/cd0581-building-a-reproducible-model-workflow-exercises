@@ -2,3 +2,4 @@
 .python-version
 wandb
 mlruns
+*.csv
