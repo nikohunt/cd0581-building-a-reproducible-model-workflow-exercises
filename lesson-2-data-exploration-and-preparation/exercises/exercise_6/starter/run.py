@@ -5,8 +5,9 @@ import os
 import tempfile
 
 import pandas as pd
-import wandb
 from sklearn.model_selection import train_test_split
+
+import wandb
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
@@ -25,10 +26,6 @@ def go(args):
     # Split model_dev/test
     logger.info("Splitting data into train and test")
     splits = {}
-
-    ###################################
-    # COMPLETE the following line     #
-    ###################################
 
     splits["train"], splits["test"] = train_test_split(
         df, test_size=args.test_size
