@@ -8,7 +8,6 @@ import pandas as pd
 import wandb
 from sklearn.model_selection import train_test_split
 
-
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
 
@@ -31,15 +30,18 @@ def go(args):
     # COMPLETE the following line     #
     ###################################
 
-    splits["train"], splits["test"] = # USE train_test_split here to split df according to the provided args.test_size
+    splits["train"], splits["test"] = train_test_split(
+        df, test_size=args.test_size
+    )
 
-    # Now we save the artifacts. We use a temporary directory so we do not leave
-    # any trace behind
+    # Now we save the artifacts. We use a temporary directory so we do not
+    # leave any trace behind
     with tempfile.TemporaryDirectory() as tmp_dir:
 
         for split, df in splits.items():
 
-            # Make the artifact name from the provided root plus the name of the split
+            # Make the artifact name from the provided root plus the name of
+            # the split
             artifact_name = f"{args.artifact_root}_{split}.csv"
 
             # Get the path on disk within the temp directory
@@ -83,37 +85,44 @@ if __name__ == "__main__":
     parser.add_argument(
         "--artifact_root",
         type=str,
-        help="Root for the names of the produced artifacts. The script will produce 2 artifacts: "
-             "{root}_train.csv and {root}_test.csv",
+        help="Root for the names of the produced artifacts. \
+            The script will produce 2 artifacts: "
+        "{root}_train.csv and {root}_test.csv",
         required=True,
     )
 
     parser.add_argument(
-        "--artifact_type", type=str, help="Type for the produced artifacts", required=True
+        "--artifact_type",
+        type=str,
+        help="Type for the produced artifacts",
+        required=True,
     )
 
     parser.add_argument(
         "--test_size",
-        help="Fraction of dataset or number of items to include in the test split",
+        help="Fraction of dataset or number of items to include in the test \
+            split",
         type=float,
-        required=True
+        required=True,
     )
 
     parser.add_argument(
         "--random_state",
-        help="An integer number to use to init the random number generator. It ensures repeatibility in the"
-             "splitting",
+        help="An integer number to use to init the random number generator. \
+            It ensures repeatibility in the"
+        "splitting",
         type=int,
         required=False,
-        default=42
+        default=42,
     )
 
     parser.add_argument(
         "--stratify",
-        help="If set, it is the name of a column to use for stratified splitting",
+        help="If set, it is the name of a column to use for stratified \
+            splitting",
         type=str,
         required=False,
-        default='null'  # unfortunately mlflow does not support well optional parameters
+        default="null",  # poor support for optional parameters
     )
 
     args = parser.parse_args()
