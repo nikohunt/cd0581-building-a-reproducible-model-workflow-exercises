@@ -4,3 +4,5 @@ wandb
 mlruns
 *.csv
 *.pyc
+lesson-3-data-validation/exercises/exercise_9/starter/conftest.py
+outputs
