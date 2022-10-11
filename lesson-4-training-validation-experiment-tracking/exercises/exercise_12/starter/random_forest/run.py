@@ -2,23 +2,24 @@
 import argparse
 import logging
 import os
-
-import yaml
 import tempfile
+
+import matplotlib.pyplot as plt
 import mlflow
-import pandas as pd
 import numpy as np
+import pandas as pd
+import wandb
+import yaml
 from mlflow.models import infer_signature
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import roc_auc_score, plot_confusion_matrix
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OrdinalEncoder, StandardScaler, FunctionTransformer
-import matplotlib.pyplot as plt
-import wandb
-from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.impute import SimpleImputer
+from sklearn.metrics import plot_confusion_matrix, roc_auc_score
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline, make_pipeline
+from sklearn.preprocessing import (FunctionTransformer, OrdinalEncoder,
+                                   StandardScaler)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)-15s %(message)s")
 logger = logging.getLogger()
@@ -100,12 +101,26 @@ def export_model(run, pipe, X_val, val_pred, export_artifact):
         # function. Provide the signature computed above ("signature") as well as a few
         # examples (input_example=X_val.iloc[:2]), and use the CLOUDPICKLE serialization
         # format (mlflow.sklearn.SERIALIZATION_FORMAT_CLOUDPICKLE)
+        # Get signature and export inference artifact
+        mlflow.sklearn.save_model(
+            pipe,
+            export_path,
+            signature=signature,
+            input_example=X_val.iloc[:2],
+            serialization_format=mlflow.sklearn.SERIALIZATION_FORMAT_CLOUDPICKLE
+        )
 
         # Then upload the temp_dir directory as an artifact:
         # 1. create a wandb.Artifact instance called "artifact"
         # 2. add the temp directory using .add_dir
         # 3. log the artifact to the run
-
+        artifact = wandb.Artifact(
+            export_artifact,
+            type="model_export",
+            description="Random forest inference artifact export"
+        )
+        artifact.add_dir(export_path)
+        run.log_artifact(artifact)
         # Make sure the artifact is uploaded before the temp dir
         # gets deleted
         artifact.wait()
